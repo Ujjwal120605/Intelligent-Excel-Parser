@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
+}
+
+:root {
+  --background: #f8f9fa;
+  --foreground: #000000;
+  --border-color: #000000;
+  --accent: #22c55e;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Brutalist utilities */
+.brutal-border {
+  border: 3px solid var(--border-color);
+}
+.brutal-border-b {
+  border-bottom: 3px solid var(--border-color);
+}
+.brutal-border-t {
+  border-top: 3px solid var(--border-color);
+}
+.brutal-border-l {
+  border-left: 3px solid var(--border-color);
+}
+.brutal-border-r {
+  border-right: 3px solid var(--border-color);
+}
+.brutal-shadow {
+  box-shadow: 8px 8px 0px 0px var(--border-color);
+}
+.brutal-shadow-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.brutal-shadow-hover:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px 0px var(--border-color);
+}
+.brutal-shadow-active:active {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-left: 3px solid var(--border-color);
+}
+::-webkit-scrollbar-thumb {
+  background: #000;
+  border: 2px solid #f1f1f1;
+}
