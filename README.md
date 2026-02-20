@@ -89,80 +89,8 @@ This system provides:
 
 ### System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Browser)                        │
-│                    Next.js Frontend (Port 3000)                 │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  • File Upload (Drag & Drop)                              │  │
-│  │  • Results Display                                        │  │
-│  │  • JSON Download                                          │  │
-│  │  • Reset/Cancel Functionality                             │  │
-│  └───────────────────────────────────────────────────────────┘  │
-└────────────────────────────┬────────────────────────────────────┘
-                             │ HTTP/REST API
-                             │ POST /parse
-                             │ GET /health
-                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    BACKEND SERVER (Port 8000)                    │
-│                    FastAPI + Python 3.11+                        │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  API Layer (main.py)                                       │  │
-│  │  • File Upload Handler                                     │  │
-│  │  • Error Handling                                          │  │
-│  │  • CORS Middleware                                         │  │
-│  └───────────────────────┬───────────────────────────────────┘  │
-│                           │                                       │
-│  ┌───────────────────────▼───────────────────────────────────┐  │
-│  │  Mapping Engine (mapping_engine.py)                        │  │
-│  │  ┌─────────────────────────────────────────────────────┐  │  │
-│  │  │ 1. File Reading                                       │  │  │
-│  │  │    • Detect file type (.xlsx, .xls, .csv)            │  │  │
-│  │  │    • Use appropriate engine (openpyxl/xlrd)          │  │  │
-│  │  └─────────────────────────────────────────────────────┘  │  │
-│  │  ┌─────────────────────────────────────────────────────┐  │  │
-│  │  │ 2. Header Detection                                   │  │  │
-│  │  │    • Scan first 20 rows                              │  │  │
-│  │  │    • Find row with most string values                 │  │  │
-│  │  │    • Handle duplicate headers                         │  │  │
-│  │  └─────────────────────────────────────────────────────┘  │  │
-│  │  ┌─────────────────────────────────────────────────────┐  │  │
-│  │  │ 3. AI Mapping (Google Gemini)                        │  │  │
-│  │  │    • Send headers + sample data to LLM               │  │  │
-│  │  │    • Map to canonical registry                       │  │  │
-│  │  │    • Extract assets from headers                     │  │  │
-│  │  │    • Generate confidence scores                      │  │  │
-│  │  └─────────────────────────────────────────────────────┘  │  │
-│  │  ┌─────────────────────────────────────────────────────┐  │  │
-│  │  │ 4. Value Parsing                                     │  │  │
-│  │  │    • Clean numeric values                            │  │  │
-│  │  │    • Handle special formats                          │  │  │
-│  │  │    • Convert to float/null                           │  │  │
-│  │  └─────────────────────────────────────────────────────┘  │  │
-│  │  ┌─────────────────────────────────────────────────────┐  │  │
-│  │  │ 5. Response Assembly                                 │  │  │
-│  │  │    • Structure parsed data                           │  │  │
-│  │  │    • Flag unmapped columns                          │  │  │
-│  │  │    • Add warnings                                   │  │  │
-│  │  └─────────────────────────────────────────────────────┘  │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                           │                                       │
-│  ┌───────────────────────▼───────────────────────────────────┐  │
-│  │  Data Models (models.py)                                   │  │
-│  │  • MappingResponse                                         │  │
-│  │  • APIResponse                                             │  │
-│  │  • ParsedData                                              │  │
-│  │  • UnmappedColumn                                          │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                           │                                       │
-│  ┌───────────────────────▼───────────────────────────────────┐  │
-│  │  External Services                                         │  │
-│  │  • Google Gemini API (genai-2.5-flash)                     │  │
-│  │  • Canonical Registry (JSON file)                          │  │
-│  └───────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+At a high level, the system is a **Next.js client** talking to a **FastAPI backend**, which in turn calls **Google Gemini** and uses a local **canonical registry JSON** for context.\n+
+```mermaid\ngraph LR\n  A[Browser / Next.js Frontend<br/>port 3000] -->|POST /parse<br/>GET /health| B[FastAPI Backend<br/>port 8000]\n  B -->|LLM call| C[Google Gemini 2.5 Flash]\n  B --> D[Canonical Registry<br/>canonical_registry.json]\n  B -->|Structured JSON<br/>APIResponse| A\n```
 
 ---
 
@@ -203,35 +131,6 @@ flowchart TD
     AA -->|Download| AB[Export JSON]
     AA -->|Reset| AC[Clear & Upload New File]
     AA -->|Cancel| AC
-```
-
-### Data Flow
-
-```
-Excel File
-    ↓
-[File Upload]
-    ↓
-[Header Detection] → Header Row Index
-    ↓
-[AI Mapping] → {
-    original_header: "Coal Used (MT)",
-    mapped_parameter: "coal_consumption",
-    confidence: 0.95,
-    detected_asset: null
-}
-    ↓
-[Value Parsing] → {
-    row: 3,
-    col: 0,
-    param_name: "coal_consumption",
-    asset_name: null,
-    raw_value: "1,234.56",
-    parsed_value: 1234.56,
-    confidence: "high"
-}
-    ↓
-[Response Assembly] → JSON API Response
 ```
 
 ---
