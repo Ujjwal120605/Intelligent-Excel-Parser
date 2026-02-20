@@ -7,6 +7,8 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)
 ![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.5-orange.svg)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)
+![Docker Compose](https://img.shields.io/badge/Docker%20Compose-Supported-blue.svg)
 
 **An intelligent AI-powered system that automatically parses messy Excel files and maps them to a canonical parameter registry using Google's Gemini AI.**
 
@@ -223,29 +225,53 @@ intelligent-excel-parser/
 - **Docker** and Docker Compose (optional, for containerized deployment)
 - **Google Gemini API Key** ([Get one here](https://makersuite.google.com/app/apikey))
 
-### Option 1: Docker Deployment (Recommended)
+### Option 1: Docker Deployment (Recommended) 🐳
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Ujjwal120605/Intelligent-Excel-Parser.git
-   cd Intelligent-Excel-Parser
-   ```
+**Quick Start with Docker Compose:**
 
-2. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your GEMINI_API_KEY
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/Ujjwal120605/Intelligent-Excel-Parser.git
+cd Intelligent-Excel-Parser
 
-3. **Start services**
-   ```bash
-   docker-compose up --build
-   ```
+# 2. Set up environment variables
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
 
-4. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Docs: http://localhost:8000/docs
+# 3. Start all services
+docker-compose up --build
+
+# Or run in detached mode
+docker-compose up --build -d
+```
+
+**Access the application:**
+- 🌐 **Frontend UI**: http://localhost:3000
+- 🔌 **Backend API**: http://localhost:8000
+- 📚 **API Documentation**: http://localhost:8000/docs
+- ❤️ **Health Check**: http://localhost:8000/health
+
+**Useful Docker Commands:**
+```bash
+# View running containers
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Stop containers
+docker-compose down
+
+# Restart containers
+docker-compose restart
+
+# Rebuild after code changes
+docker-compose up --build -d
+```
+
+**Docker Images:**
+- Backend: Built from `backend/Dockerfile` (Python 3.11 + FastAPI)
+- Frontend: Built from `frontend/Dockerfile` (Node.js 20 + Next.js)
 
 ### Option 2: Local Development
 
@@ -509,10 +535,51 @@ The frontend uses environment variables for backend URL:
 
 ## 🚢 Deployment
 
-### Docker Compose Deployment
+### Docker Compose Deployment (Recommended)
+
+The easiest way to deploy is using Docker Compose, which orchestrates both frontend and backend services:
 
 ```bash
-docker-compose up -d --build
+# Build and start all services
+docker-compose up --build -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+**Docker Compose Configuration:**
+- `docker-compose.yml` - Orchestrates backend and frontend services
+- `backend/Dockerfile` - Backend container configuration
+- `frontend/Dockerfile` - Frontend container configuration
+
+**Ports:**
+- Frontend: `3000`
+- Backend: `8000`
+
+### Publishing to Docker Hub (Optional)
+
+If you want to publish your Docker images to Docker Hub:
+
+```bash
+# 1. Login to Docker Hub
+docker login
+
+# 2. Build and tag images
+docker build -t yourusername/intelligent-excel-parser-backend:latest -f backend/Dockerfile .
+docker build -t yourusername/intelligent-excel-parser-frontend:latest -f frontend/Dockerfile .
+
+# 3. Push to Docker Hub
+docker push yourusername/intelligent-excel-parser-backend:latest
+docker push yourusername/intelligent-excel-parser-frontend:latest
+```
+
+Then others can pull and run:
+```bash
+docker pull yourusername/intelligent-excel-parser-backend:latest
+docker pull yourusername/intelligent-excel-parser-frontend:latest
 ```
 
 ### Production Deployment
