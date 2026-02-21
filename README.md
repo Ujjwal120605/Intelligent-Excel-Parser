@@ -105,7 +105,7 @@ At a high level, the system is a **Next.js client** talking to a **FastAPI backe
 ### Watch the Demo
 
 <!-- GitHub will show this as a downloadable link; some browsers may also play it inline -->
-[📹 View Demo Video on YouTube](https://youtu.be/4IitA6jt5js)
+[📹 View Demo Video on YouTube](https://www.youtube.com/watch?v=4IitA6jt5js)
 
 </div>
 
