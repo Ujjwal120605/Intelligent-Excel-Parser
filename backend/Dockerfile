@@ -7,6 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ backend/
 # Make sure python module path works inside docker
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app/backend
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
